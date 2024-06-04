@@ -1,16 +1,13 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { BookingsModule } from './bookings/bookings.module';
+import { BookingsService } from './bookings.service';
+import { BookingsController } from './bookings.controller';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { BookingsController } from './bookings/bookings.controller';
-import { BookingsService } from './bookings/bookings.service';
-import { Booking, BookingSchema } from './bookings/bookings.model';
+import { Booking, BookingSchema } from './bookings.model';
 
 @Module({
   imports: [
-    BookingsModule,
     ConfigModule.forRoot({
       envFilePath: `.env`,
     }),
@@ -19,7 +16,7 @@ import { Booking, BookingSchema } from './bookings/bookings.model';
       { name: Booking.name, schema: BookingSchema, collection: 'booking' },
     ]),
   ],
-  controllers: [AppController, BookingsController],
   providers: [BookingsService],
+  controllers: [BookingsController],
 })
-export class AppModule {}
+export class BookingsModule {}
