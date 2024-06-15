@@ -2,15 +2,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as TelegramBot from 'node-telegram-bot-api';
-import {
-  Conflict,
-  NotFound,
-  BadRequest,
-  Unauthorized,
-  NotAcceptable,
-} from 'http-errors';
+import { Conflict, BadRequest } from 'http-errors';
 import { Booking } from './bookings.model';
-import { CreateBookingDto } from './dto/ctreate.booking.dto';
+import { CreateBookingDto } from './dto/create.booking.dto';
 
 @Injectable()
 export class BookingsService {
@@ -23,7 +17,7 @@ export class BookingsService {
   }
 
   async create(booking: CreateBookingDto): Promise<Booking> {
-    const { name, phone, start, end, hall } = booking;
+    const { name, url, start, end, hall } = booking;
 
     // Проверка на совпадение времени бронирования
     const existingBookings = await this.bookingModel.find({
@@ -42,10 +36,10 @@ export class BookingsService {
       );
     }
 
-    if (name && phone && start && end && hall) {
+    if (name && url && start && end && hall) {
       const createdBooking = await this.bookingModel.create({
         name: name,
-        phone: phone,
+        url: url,
         start: start,
         end: end,
         hall: hall,
@@ -58,7 +52,10 @@ export class BookingsService {
   }
 
   async findAll(hall: string): Promise<Booking[]> {
-    return this.bookingModel.find({ hall: hall, paid: false }).exec();
+    return this.bookingModel
+      .find({ hall: hall, paid: false })
+      .exec()
+      .select('start, end, title, ');
   }
 
   //   private async setupBot() {
